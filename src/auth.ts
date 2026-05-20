@@ -1,11 +1,25 @@
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
+import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "./lib/prisma"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
+    CredentialsProvider({
+      name: "Preview Account",
+      credentials: {},
+      async authorize() {
+        return {
+          id: "preview-user-1",
+          name: "Preview Admin",
+          email: "admin@preview.com",
+          role: "SUPER_ADMIN",
+          department: "Management"
+        }
+      }
+    }),
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
